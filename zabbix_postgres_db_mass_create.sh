@@ -3,6 +3,8 @@
 # this script woks without password inline because the global 'env' contains
 # PGUSER=postgres
 # PGPASSWORD=zabbix
+
+# user 'zabbix' must already exist in postgresql engine
  
 versions="2.4
 3.0
@@ -32,13 +34,16 @@ if [ $? -eq 0 ]; then
 git reset --hard HEAD && git clean -fd
 git checkout release/$ver
 ./bootstrap.sh && ./configure && make dbschema
- 
-dropdb -p $1 $db
 
-createdb -p $1 -O zabbix $db 
+# drop existing database
+dropdb --port=$1 $db
+# in case of database do not exisist. it will produce errors
+
+# create a new database and assign user. User must already exist
+createdb --port=$1 --owner=zabbix $db 
  
 # insert schema and data
-cat database/postgresql/schema.sql database/postgresql/images.sql database/postgresql/data.sql | psql -p $1 --user=zabbix $db
+cat database/postgresql/schema.sql database/postgresql/images.sql database/postgresql/data.sql | psql --port=$1 --user=zabbix $db
 
 else
 echo please install global 'env' variables:
