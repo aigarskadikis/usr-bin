@@ -25,13 +25,14 @@ echo $ver
  
 db=z`echo $ver | sed "s|\.||"`
 echo $db
+
+env | grep PGPASSWORD
+if [ $? -eq 0 ]; then
+
 git reset --hard HEAD && git clean -fd
 git checkout release/$ver
 ./bootstrap.sh && ./configure && make dbschema
  
-env | grep PGPASSWORD
-
-if [ $? -eq 0 ]; then
 dropdb -p $1 $db
 
 createdb -p $1 -O zabbix $db 
