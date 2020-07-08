@@ -32,7 +32,7 @@ git checkout release/$ver
 env | grep PGPASSWORD
 
 if [ $? -eq 0 ]; then
-dropdb -p 7411 $db
+dropdb -p $1 $db
 
 createdb -p $1 -O zabbix $db 
  
