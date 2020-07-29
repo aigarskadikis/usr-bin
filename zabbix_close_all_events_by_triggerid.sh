@@ -1,12 +1,12 @@
 #!/bin/bash
-url=http://127.0.0.1/api_jsonrpc.php
+url=http://127.0.0.1:140/api_jsonrpc.php
 user=Admin
 password=zabbix
 triggerid=$1
 limit=$2
 
 # get authorization token
-auth=$(curl -s -X POST -H 'Content-Type: application/json-rpc' -d \
+auth=$(curl -ks -X POST -H 'Content-Type: application/json-rpc' -d \
 "
 {
  \"jsonrpc\": \"2.0\",
@@ -26,7 +26,7 @@ echo $auth
 echo
 
 echo event ids to be closed:
-close=$(curl -s --location --request POST $url --header 'Content-Type: application/json' -d "
+close=$(curl -ks --location --request POST $url --header 'Content-Type: application/json' -d "
 {
     \"jsonrpc\": \"2.0\",
     \"method\": \"problem.get\",
@@ -45,7 +45,7 @@ echo
 
 if [ ! -z "$close" ]; then
 if [ ! -z "$3" ]; then
-curl --location --request POST $url --header 'Content-Type: application/json' -d "
+curl -k --location --request POST $url --header 'Content-Type: application/json' -d "
 {
 	\"jsonrpc\": \"2.0\",
 	\"method\": \"event.acknowledge\",
@@ -63,7 +63,7 @@ echo
 
 echo
 echo logout user:
-curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
+curl -ks -X POST -H 'Content-Type: application/json-rpc' -d " \
 {
     \"jsonrpc\": \"2.0\",
     \"method\": \"user.logout\",
