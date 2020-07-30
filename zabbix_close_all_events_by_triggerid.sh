@@ -4,6 +4,7 @@ user=Admin
 password=zabbix
 triggerid=$1
 limit=$2
+time_till=$3
 
 # get authorization token
 auth=$(curl -ks -X POST -H 'Content-Type: application/json-rpc' -d \
@@ -33,6 +34,7 @@ close=$(curl -ks --location --request POST $url --header 'Content-Type: applicat
     \"params\": {
         \"objectids\": \"$triggerid\",
         \"output\": \"eventid\",
+        \"time_till\": \"$time_till\",
         \"limit\": \"$limit\"
     },
     \"auth\": \"$auth\",
@@ -44,7 +46,7 @@ echo
 # if there is a third argument
 
 if [ ! -z "$close" ]; then
-if [ ! -z "$3" ]; then
+if [ ! -z "$4" ]; then
 curl -k --location --request POST $url --header 'Content-Type: application/json' -d "
 {
 	\"jsonrpc\": \"2.0\",
