@@ -26,6 +26,16 @@ config = ConfigParser.ConfigParser()
 config.readfp(open(r'/root/.aws/config'))
 region = config.get('default', 'region')
 
+config.readfp(open(r'/root/.aws/credentials'))
+access_key = config.get('default', 'aws_access_key_id')
+secret_key = config.get('default', 'aws_secret_access_key')
+# Read AWS access key and secreate from external file which is coming from the tool 'aws configure'
+# by default 'aws configure' will create '/root/.aws/config' and '/root/.aws/credentials'
+# do not continue if the credentials file was empty
+if access_key is None or secret_key is None:
+    print('No access key is available.')
+    sys.exit()
+
  
 # ************* REQUEST VALUES *************
 method = 'POST'
@@ -56,13 +66,6 @@ def getSignatureKey(key, dateStamp, regionName, serviceName):
     kSigning = sign(kService, "aws4_request")
     return kSigning
  
-# Read AWS access key from env. variables or configuration file. Best practice is NOT
-# to embed credentials in code.
-access_key = os.environ.get('AWS_ACCESS_KEY_ID')
-secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
-if access_key is None or secret_key is None:
-    print('No access key is available.')
-    sys.exit()
  
 # Create a date for headers and the credential string
 t = datetime.datetime.utcnow()
