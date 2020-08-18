@@ -17,7 +17,7 @@
 # This version makes a POST request and passes request parameters
 # in the body (payload) of the request. Auth information is passed in
 # an Authorization header.
-import sys, os, base64, datetime, hashlib, hmac
+import sys, os, base64, datetime, hashlib, hmac, time
 import requests # pip install requests
 import logging
  
@@ -27,13 +27,17 @@ service = 'monitoring'
 host = 'monitoring.us-west-2.amazonaws.com'
 region = 'us-west-2'
 endpoint = 'https://monitoring.us-west-2.amazonaws.com/'
+time_from = str(int(time.time())-600)
+time_till = str(int(time.time())-300)
+print (time_from)
+print (time_till)
 # POST requests use a content type header. For DynamoDB,
 # the content is JSON.
 content_type = 'application/x-amz-json-1.0'
  
 amz_target = 'GraniteServiceVersion20100801.GetMetricData'
  
-request_parameters = '{"StartTime":1597758570 ,"EndTime":1597758870 ,"MetricDataQueries":[{"Id":"m1","MetricStat":{"Metric":{"MetricName":"NetworkIn","Namespace":"AWS/EC2","Dimensions":[{"Name":"InstanceId","Value":"i-0ad4b6cfaf8da800f"}]},"Period":300,"Stat":"Average","Unit":"Bytes"}},{"Id":"m2","MetricStat":{"Metric":{"MetricName":"NetworkOut","Namespace":"AWS/EC2","Dimensions":[{"Name":"InstanceId","Value":"i-0ad4b6cfaf8da800f"}]},"Period":300,"Stat":"Average","Unit":"Bytes"}}]}'
+request_parameters = '{"StartTime":'+time_from+',"EndTime":'+time_till+',"MetricDataQueries":[{"Id":"m1","MetricStat":{"Metric":{"MetricName":"NetworkIn","Namespace":"AWS/EC2","Dimensions":[{"Name":"InstanceId","Value":"i-0ad4b6cfaf8da800f"}]},"Period":300,"Stat":"Average","Unit":"Bytes"}}]}'
  
 # Key derivation functions. See:
 # http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html#signature-v4-examples-python
