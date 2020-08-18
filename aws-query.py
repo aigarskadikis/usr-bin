@@ -20,13 +20,14 @@
 import sys, os, base64, datetime, hashlib, hmac, time
 import requests # pip install requests
 import logging
-import ConfigParser
+import ConfigParser, os
 
 config = ConfigParser.ConfigParser()
-config.readfp(open(r'/root/.aws/config'))
+config.readfp(open(os.path.expanduser('~/.aws/config')))
+
 region = config.get('default', 'region')
 
-config.readfp(open(r'/root/.aws/credentials'))
+config.readfp(open(os.path.expanduser('~/.aws/credentials')))
 access_key = config.get('default', 'aws_access_key_id')
 secret_key = config.get('default', 'aws_secret_access_key')
 # Read AWS access key and secreate from external file which is coming from the tool 'aws configure'
