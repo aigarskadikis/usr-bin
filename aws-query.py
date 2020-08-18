@@ -20,13 +20,18 @@
 import sys, os, base64, datetime, hashlib, hmac, time
 import requests # pip install requests
 import logging
+import ConfigParser
+
+config = ConfigParser.ConfigParser()
+config.readfp(open(r'/root/.aws/config'))
+region = config.get('default', 'region')
+
  
 # ************* REQUEST VALUES *************
 method = 'POST'
 service = 'monitoring'
-host = 'monitoring.us-west-2.amazonaws.com'
-region = 'us-west-2'
-endpoint = 'https://monitoring.us-west-2.amazonaws.com/'
+host = 'monitoring.'+region+'.amazonaws.com'
+endpoint = 'https://monitoring.'+region+'.amazonaws.com/'
 time_from = str(int(time.time())-600)
 time_till = str(int(time.time())-300)
 print (time_from)
@@ -37,7 +42,7 @@ content_type = 'application/x-amz-json-1.0'
  
 amz_target = 'GraniteServiceVersion20100801.GetMetricData'
  
-request_parameters = '{"StartTime":'+time_from+',"EndTime":'+time_till+',"MetricDataQueries":[{"Id":"m1","MetricStat":{"Metric":{"MetricName":"NetworkIn","Namespace":"AWS/EC2","Dimensions":[{"Name":"InstanceId","Value":"i-0ad4b6cfaf8da800f"}]},"Period":300,"Stat":"Average","Unit":"Bytes"}}]}'
+request_parameters = '{"StartTime":'+time_from+',"EndTime":'+time_till+',"MetricDataQueries":[{"Id":"m1","MetricStat":{"Metric":{"MetricName":"CPUUtilization","Namespace":"AWS/EC2","Dimensions":[{"Name":"InstanceId","Value":"i-0ad4b6cfaf8da800f"}]},"Period":300,"Stat":"Average"}}]}'
  
 # Key derivation functions. See:
 # http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html#signature-v4-examples-python
