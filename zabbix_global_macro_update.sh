@@ -6,8 +6,9 @@ macro=$1
 value=$2
 
 # get authorization tokken
-auth=$(curl -s -X POST -H 'Content-Type: application/json-rpc' -d \
-"
+auth=$(curl -s -X POST \
+-H 'Content-Type: application/json-rpc' \
+-d " \
 {
  \"jsonrpc\": \"2.0\",
  \"method\": \"user.login\",
@@ -21,7 +22,9 @@ auth=$(curl -s -X POST -H 'Content-Type: application/json-rpc' -d \
 " $url | grep -E -o "([0-9a-f]{32,32})")
 
 # get global user macro id
-id=$(curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
+id=$(curl -s -X POST \
+-H 'Content-Type: application/json-rpc' \
+-d " \
 {
     \"jsonrpc\": \"2.0\",
     \"method\": \"usermacro.get\",
@@ -36,7 +39,9 @@ id=$(curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
 " $url | jq -r ".result[].globalmacroid") 
 
 # update
-curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
+curl -s -X POST \
+-H 'Content-Type: application/json-rpc' \
+-d " \
 {
     \"jsonrpc\": \"2.0\",
     \"method\": \"usermacro.updateglobal\",
@@ -50,7 +55,9 @@ curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
 " $url
 
 # logout user
-curl -s -X POST -H 'Content-Type: application/json-rpc' -d " \
+curl -s -X POST \
+-H 'Content-Type: application/json-rpc' \
+-d " \
 {
     \"jsonrpc\": \"2.0\",
     \"method\": \"user.logout\",
