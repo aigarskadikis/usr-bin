@@ -45,8 +45,8 @@ host = 'monitoring.'+region+'.amazonaws.com'
 endpoint = 'https://monitoring.'+region+'.amazonaws.com/'
 time_from = str(int(time.time())-600)
 time_till = str(int(time.time())-300)
-#print (time_from)
-#print (time_till)
+print (time_from)
+print (time_till)
 # POST requests use a content type header. For DynamoDB,
 # the content is JSON.
 content_type = 'application/x-amz-json-1.0'
@@ -93,8 +93,8 @@ canonical_querystring = ''
 # Note that there is a trailing \n.
 canonical_headers = 'content-type:' + content_type + '\n' + 'host:' + host + '\n' + 'x-amz-date:' + amz_date + '\n' + 'x-amz-target:' + amz_target + '\n'
 
-#print ("canonical_headers")
-#print (canonical_headers)
+print ("canonical_headers")
+print (canonical_headers)
 # Step 5: Create the list of signed headers. This lists the headers
 # in the canonical_headers list, delimited with ";" and in alpha order.
 # Note: The request can include any headers; canonical_headers and
@@ -105,19 +105,19 @@ signed_headers = 'content-type;host;x-amz-date;x-amz-target'
  
 # Step 6: Create payload hash. In this example, the payload (body of
 # the request) contains the request parameters.
-#print ("request parameters")
-#print ("###################################")
-#print (request_parameters)
-#print ("###################################")
+print ("request parameters")
+print ("###################################")
+print (request_parameters)
+print ("###################################")
  
 payload_hash = hashlib.sha256(request_parameters.encode('utf-8')).hexdigest()
-#print (payload_hash)
+print (payload_hash)
 # Step 7: Combine elements to create canonical request
 canonical_request = method + '\n' + canonical_uri + '\n' + canonical_querystring + '\n' + canonical_headers + '\n' + signed_headers + '\n' + payload_hash
-#print ("Canonical request")
-#print ("###############################")
-#print (canonical_request)
-#print ('#################################')
+print ("Canonical request")
+print ("###############################")
+print (canonical_request)
+print ('#################################')
  
 # ************* TASK 2: CREATE THE STRING TO SIGN*************
 # Match the algorithm to the hashing algorithm you use, either SHA-1 or
@@ -125,27 +125,27 @@ canonical_request = method + '\n' + canonical_uri + '\n' + canonical_querystring
 algorithm = 'AWS4-HMAC-SHA256'
 credential_scope = date_stamp + '/' + region + '/' + service + '/' + 'aws4_request'
 string_to_sign = algorithm + '\n' +  amz_date + '\n' +  credential_scope + '\n' +  hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
-#print ("String to sign")
-#print ("##################################")
-#print (string_to_sign)
-#print ("##################################")
+print ("String to sign")
+print ("##################################")
+print (string_to_sign)
+print ("##################################")
  
 # ************* TASK 3: CALCULATE THE SIGNATURE *************
 # Create the signing key using the function defined above.
 signing_key = getSignatureKey(secret_key, date_stamp, region, service)
-#print ("signing key")
-#print ("##################################")
-#print (date_stamp)
+print ("signing key")
+print ("##################################")
+print (date_stamp)
 #print (signing_key)
-#print (hmac.new(signing_key))
-#print ("##################################")
+print (hmac.new(signing_key))
+print ("##################################")
  
 # Sign the string_to_sign using the signing_key
 signature = hmac.new(signing_key, (string_to_sign).encode('utf-8'), hashlib.sha256).hexdigest()
-#print ("Signature")
-#print ("##################################")
-#print (signature)
-#print ("##################################")
+print ("Signature")
+print ("##################################")
+print (signature)
+print ("##################################")
  
  
 # ************* TASK 4: ADD SIGNING INFORMATION TO THE REQUEST *************
@@ -161,21 +161,21 @@ headers = {'Content-Type':content_type,
            'X-Amz-Date':amz_date,
            'X-Amz-Target':amz_target,
            'Authorization':authorization_header}
-#print ("headers")
-#print ("#########################################################")
-#print (headers)
-#print ("#########################################################")
-#print ("request_parameters")
-#print ("#########################################################")
-#print (request_parameters)
-#print ("#########################################################")
+print ("headers")
+print ("#########################################################")
+print (headers)
+print ("#########################################################")
+print ("request_parameters")
+print ("#########################################################")
+print (request_parameters)
+print ("#########################################################")
 # ************* SEND THE REQUEST *************
-#print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
-#print('Request URL = ' + endpoint)
+print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
+print('Request URL = ' + endpoint)
  
 r = requests.post(endpoint, data=request_parameters, headers=headers)
  
-#print('\nRESPONSE++++++++++++++++++++++++++++++++++++')
-#print('Response code: %d\n' % r.status_code)
+print('\nRESPONSE++++++++++++++++++++++++++++++++++++')
+print('Response code: %d\n' % r.status_code)
 print(r.text)
 
