@@ -136,7 +136,7 @@ signing_key = getSignatureKey(secret_key, date_stamp, region, service)
 print ("signing key")
 print ("##################################")
 print (date_stamp)
-print (signing_key)
+#print (signing_key)
 print (hmac.new(signing_key))
 print ("##################################")
  
