@@ -1,5 +1,5 @@
 #!/bin/bash
-SLEEP=10
+SLEEP=1
 DB=zabbix
 
 echo "backuping schema"
@@ -8,7 +8,7 @@ mysqldump \
 --single-transaction \
 --create-options \
 --no-data \
-zabbix > schema.sql
+$DB > schema.sql
 echo "sleeping for $SLEEP seconds"
 sleep $SLEEP
 
@@ -24,7 +24,8 @@ mysqldump \
 --ignore-table=$DB.history_uint \
 --ignore-table=$DB.trends \
 --ignore-table=$DB.trends_uint \
-zabbix > data.sql
+$DB > data.sql
+echo "sleeping for $SLEEP seconds"
 sleep $SLEEP
 
 echo "
@@ -37,7 +38,7 @@ trends
 trends_uint
 " | grep -v "^$" | while IFS= read -r TABLE; do {
 echo "backuping $TABLE"
-mysql --flush-logs --single-transaction --no-create-info $DB $TABLE > $TABLE.sql
+mysqldump --flush-logs --single-transaction --no-create-info $DB $TABLE > $TABLE.sql
 echo "sleeping for $SLEEP seconds"
 sleep $SLEEP
 } done
