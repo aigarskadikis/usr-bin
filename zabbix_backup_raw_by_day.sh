@@ -1,10 +1,11 @@
 #!/bin/bash
 SLEEP=1
 DB=zabbix
+DAYS=2
 
 d=0
 
-while true
+while((d < DAYS))
 do {
 
 # add +1
@@ -30,11 +31,11 @@ do {
 # check if this day is already in backup
 if [ -f $FROM.$TILL.$TABLE.sql ]; then
 
-echo $FROM.$TILL.$TABLE.sql already exist
+echo "$FROM 00:00:00(inclusive) => $TILL 00:00:00(exclusive) $TABLE"
 
 else
 
-echo "$TABLE $FROM 00:00:00(inclusive) => $TILL 00:00:00(exclusive)"
+echo "$FROM 00:00:00(inclusive) => $TILL 00:00:00(exclusive) $TABLE"
 mysqldump --flush-logs \
 --single-transaction \
 --no-create-info \
