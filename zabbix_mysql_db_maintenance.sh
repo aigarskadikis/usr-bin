@@ -62,5 +62,5 @@ echo
 
 } done
 
-#/usr/sbin/zabbix_server -R housekeeper_execute
+/usr/sbin/zabbix_server -R housekeeper_execute
 
