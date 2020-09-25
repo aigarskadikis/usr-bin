@@ -14,6 +14,9 @@ trends_uint
 grep -v "^$" | \
 while IFS= read -r TABLE
 do {
-mysql $DB -e "SHOW CREATE TABLE $TABLE\G"
+mysql $DB -e " \
+SHOW CREATE TABLE $TABLE\G
+" | \
+grep -oP 'PARTITION \Kp[0-9_]+'
 } done
 
