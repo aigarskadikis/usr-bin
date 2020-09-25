@@ -5,6 +5,11 @@ DB=zabbix
 echo "
 history_str
 history_log
+history_text
+trends_uint
+trends
+history
+history_uint
 " | 
 grep -v "^$" | \
 while IFS= read -r TABLE
