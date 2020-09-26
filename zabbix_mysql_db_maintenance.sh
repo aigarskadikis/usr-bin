@@ -1,4 +1,7 @@
 #!/bin/bash
+
+date
+
 SLEEP=1
 DB=zabbix
 
