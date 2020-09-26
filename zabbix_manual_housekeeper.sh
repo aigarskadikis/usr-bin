@@ -45,10 +45,16 @@ grep -v "^$" | \
 while IFS= read -r PERIOD
 do {
 
+
 PERIOD_FULL_NAME=$(echo "$PERIOD" | sed "s|d| DAY|")
+# full name required for SQL DELETE command to use syntax:
+# WHERE clock < UNIX_TIMESTAMP(NOW()-INTERVAL 3 DAY);
+# practically a transformation happens: '3d' => '3 DAY'
 echo $PERIOD_FULL_NAME
 
 # collect all ITEMIDs which has a specific storage period
+# hosts.status=0 - active hosts
+# hosts.status=1 - disabled hosts
 ALL_ITEM_IDS=$(
 mysql $DB --raw --batch -N -e "
 SET SESSION group_concat_max_len = 1000000;
@@ -72,3 +78,4 @@ sleep 30
 
 
 } done
+
