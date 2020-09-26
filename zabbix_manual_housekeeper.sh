@@ -21,9 +21,9 @@ if [ $VALUE_TYPE -eq 2 ]; then TABLE="history_log"; fi
 if [ $VALUE_TYPE -eq 3 ]; then TABLE="history_uint"; fi
 if [ $VALUE_TYPE -eq 4 ]; then TABLE="history_text"; fi
 
-echo ==========
+echo ============
 echo $TABLE
-echo ==========
+echo ============
 
 
 HISTORY_PERIOD=$(
@@ -43,7 +43,6 @@ while IFS= read -r PERIOD
 do {
 
 PERIOD_FULL_NAME=$(echo "$PERIOD" | sed "s|d| DAY|")
-echo $PERIOD
 echo $PERIOD_FULL_NAME
 
 # summary items which has this exact period
@@ -59,10 +58,7 @@ AND items.history=\"$PERIOD\";
 "
 )
 
-echo "DELETE FROM $TABLE
-WHERE itemid IN ($ALL_ITEM_IDS)
-AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME)
-LIMIT 1;"
+# echo "DELETE FROM $TABLE WHERE itemid IN ($ALL_ITEM_IDS) AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME) LIMIT 1;"
 mysql $DB -e "DELETE FROM $TABLE 
 WHERE itemid IN ($ALL_ITEM_IDS)
 AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME)
