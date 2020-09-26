@@ -5,6 +5,14 @@ date
 SLEEP=1
 DB=zabbix
 
+# items.value_type:
+# 0, ITEM_VALUE_TYPE_FLOAT - Float
+# 1, ITEM_VALUE_TYPE_STR - Character
+# 2, ITEM_VALUE_TYPE_LOG - Log
+# 3, ITEM_VALUE_TYPE_UINT64 - Unsigned integer
+# 4, ITEM_VALUE_TYPE_TEXT - Text
+
+
 HISTORY_PERIOD=$(
 mysql $DB --raw --batch -N -e "
 SELECT DISTINCT items.history
@@ -21,7 +29,7 @@ grep -v "^$" | \
 while IFS= read -r PERIOD
 do {
 
-PERIOD_FULL_NAME=$(echo "$PERIOD" | sed "s|d| DAYS|")
+PERIOD_FULL_NAME=$(echo "$PERIOD" | sed "s|d| DAY|")
 echo $PERIOD
 echo $PERIOD_FULL_NAME
 
@@ -42,6 +50,10 @@ echo "DELETE FROM history
 WHERE itemid IN ($ALL_ITEM_IDS)
 AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME)
 LIMIT 1;"
-
+mysql $DB -e "DELETE FROM history 
+WHERE itemid IN ($ALL_ITEM_IDS)
+AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME)
+LIMIT 1;"
 
 } done
+
