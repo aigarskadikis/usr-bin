@@ -12,6 +12,8 @@ DB=zabbix
 # 3, ITEM_VALUE_TYPE_UINT64 - Unsigned integer
 # 4, ITEM_VALUE_TYPE_TEXT - Text
 
+# delete historical data from tables:
+# history, history_str, history_log, history_uint, history_text
 for VALUE_TYPE in 0 1 2 3 4
 do {
 
@@ -25,7 +27,7 @@ echo ============
 echo $TABLE
 echo ============
 
-
+# work with only items which has a 'd' (day) units. 's', 'h', 'm', 'w' 'y' will not be considered into account
 HISTORY_PERIOD=$(
 mysql $DB --raw --batch -N -e "
 SELECT DISTINCT items.history
@@ -37,6 +39,7 @@ AND items.history LIKE '%d';
 "
 )
 
+# go through each definition for example 3d, 7d, 14d
 echo "$HISTORY_PERIOD" | \
 grep -v "^$" | \
 while IFS= read -r PERIOD
@@ -45,7 +48,7 @@ do {
 PERIOD_FULL_NAME=$(echo "$PERIOD" | sed "s|d| DAY|")
 echo $PERIOD_FULL_NAME
 
-# summary items which has this exact period
+# collect all ITEMIDs which has a specific storage period
 ALL_ITEM_IDS=$(
 mysql $DB --raw --batch -N -e "
 SET SESSION group_concat_max_len = 1000000;
@@ -58,11 +61,12 @@ AND items.history=\"$PERIOD\";
 "
 )
 
-# echo "DELETE FROM $TABLE WHERE itemid IN ($ALL_ITEM_IDS) AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME) LIMIT 1;"
+# launch delete operation
 mysql $DB -e "DELETE FROM $TABLE 
 WHERE itemid IN ($ALL_ITEM_IDS)
-AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME)
-LIMIT 1;"
+AND clock < UNIX_TIMESTAMP(NOW()-INTERVAL $PERIOD_FULL_NAME);"
+
+sleep 30
 
 } done
 
