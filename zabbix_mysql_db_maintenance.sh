@@ -70,7 +70,7 @@ echo FROM=$FROM
 TO=$(echo "$LINE" | grep -Eo "[0-9]+$")
 echo TO=$TO
 
-mysqldump --flush-logs --single-transaction --no-create-info $DB $OLD \
+mysqldump --set-gtid-purged=OFF --flush-logs --single-transaction --no-create-info $DB $OLD \
 --where=" clock >= $FROM AND clock < $TO " > $DEST/$FROM.$OLD.sql
 
 } done
