@@ -40,9 +40,16 @@ grep -Eo "PARTITION.*VALUES LESS THAN..[0-9]+"
 if [ -z "$PART_LIST_DETAILED" ] 
 then
 
+# reset FROM counter to year 1970
+FROM=0
+
 # if table does not have partitions then optize whole table
 echo "OPTIMIZE TABLE $OLD;"
 mysql $DB -e "OPTIMIZE TABLE $OLD;"
+
+# do mysqldump of whole table
+mysqldump --set-gtid-purged=OFF --flush-logs --single-transaction --no-create-info \
+$DB $OLD | gzip --fast > $DEST/$(date -d @$FROM "+%Y%m%d").$OLD.sql.gz
 
 else
 # if table contains partitions
@@ -70,8 +77,13 @@ echo FROM=$FROM
 TO=$(echo "$LINE" | grep -Eo "[0-9]+$")
 echo TO=$TO
 
-mysqldump --set-gtid-purged=OFF --flush-logs --single-transaction --no-create-info $DB $OLD \
---where=" clock >= $FROM AND clock < $TO " > $DEST/$FROM.$OLD.sql
+mysqldump \
+--set-gtid-purged=OFF \
+--flush-logs \
+--single-transaction \
+--no-create-info \
+--where=" clock >= $FROM AND clock < $TO " \
+$DB $OLD | gzip --fast > $DEST/$(date -d @$FROM "+%Y%m%d").$OLD.sql.gz
 
 } done
 
