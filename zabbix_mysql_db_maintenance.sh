@@ -4,6 +4,8 @@ date
 
 SLEEP=1
 DB=zabbix
+DEST=/backup/zabbix/mysql/raw
+FORMAT="%Y%D%M"
 
 echo "
 history_str
@@ -47,6 +49,9 @@ do {
 
 echo "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
 mysql $DB -e "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
+
+echo $(mysql $DB -e "FROM_UNIXTIME(SELECT MIN(clock) FROM TABLE $OLD PARTITION $PARTITION,$FORMAT);")
+mysqldump --flush-logs --single-transaction --no-create-info $DB $TABLE > $DEST/$TABLE.sql
 
 } done
 
