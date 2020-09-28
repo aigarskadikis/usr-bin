@@ -2,10 +2,10 @@
 
 date
 
-SLEEP=1
 DB=zabbix
-DEST=/backup/zabbix/mysql/raw
-FORMAT="%Y%D%M"
+DEST=/backup/mysql/zabbix/raw
+FROM=0
+TO=0
 
 echo "
 history_str
@@ -29,29 +29,49 @@ mysql $DB -e "RENAME TABLE $TABLE TO $OLD;"
 echo "CREATE TABLE $TABLE LIKE $OLD;"
 mysql $DB -e "CREATE TABLE $TABLE LIKE $OLD;"
 
-PART_LIST=$(
+PART_LIST_DETAILED=$(
 mysql $DB -e " \
 SHOW CREATE TABLE $TABLE\G
 " | \
-grep -oP 'PARTITION \Kp[0-9_]+')
-if [ -z "$PART_LIST" ] 
+grep -Eo "PARTITION.*VALUES LESS THAN..[0-9]+"
+)
+
+
+if [ -z "$PART_LIST_DETAILED" ] 
 then
 
+# if table does not have partitions then optize whole table
 echo "OPTIMIZE TABLE $OLD;"
 mysql $DB -e "OPTIMIZE TABLE $OLD;"
 
 else
+# if table contains partitions
 
-echo "$PART_LIST" | \
+# observe partition name and timestamps
+echo "$PART_LIST_DETAILED" | \
+grep -Eo "PARTITION.*VALUES LESS THAN..[0-9]+" | \
 grep -v "^$" | \
-while IFS= read -r PARTITION
+while IFS= read -r LINE
 do {
 
+# name of partition
+PARTITION=$(echo "$LINE" | grep -oP "PARTITION.\K\w+")
+
+# rebuild partition, this will really free up free space if some records do not exist anymore
 echo "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
 mysql $DB -e "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
 
-echo $(mysql $DB -e "FROM_UNIXTIME(SELECT MIN(clock) FROM TABLE $OLD PARTITION $PARTITION,$FORMAT);")
-mysqldump --flush-logs --single-transaction --no-create-info $DB $TABLE > $DEST/$TABLE.sql
+# LINE
+echo $LINE
+# timestamp from
+FROM=$TO
+echo FROM=$FROM
+# timestamp to
+TO=$(echo "$LINE" | grep -Eo "[0-9]+$")
+echo TO=$TO
+
+mysqldump --flush-logs --single-transaction --no-create-info $DB $OLD \
+--where=" clock >= $FROM AND clock < $TO " > $DEST/$FROM.$OLD.sql
 
 } done
 
