@@ -11,6 +11,7 @@ DEST=/backup/mysql/zabbix/raw
 FROM=0
 TO=0
 
+
 echo "
 history_str
 history_log
@@ -118,6 +119,10 @@ mysql $DB -e "DROP TABLE $TMP;"
 echo
 
 } done
+
+
+mysql $DB -e "OPTIMIZE TABLE hosts;"
+mysql $DB -e "OPTIMIZE TABLE items;"
 
 /usr/sbin/zabbix_server -R housekeeper_execute
 
