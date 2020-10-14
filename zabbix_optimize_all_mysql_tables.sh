@@ -14,6 +14,6 @@ AND table_name NOT IN (
 order by data_free desc;
 ")
 do
-mysql -e "OPTIMIZE TABLE $table;"
+mysql zabbix -e "OPTIMIZE TABLE $table;"
 done
 
