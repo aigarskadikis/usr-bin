@@ -48,4 +48,4 @@ curl -s -X POST \
     \"id\": 1,
     \"auth\": \"$auth\"
 }
-" $url
+" $url > /dev/null
