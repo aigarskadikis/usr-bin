@@ -139,5 +139,10 @@ echo "mysql $DB -e \"OPTIMIZE TABLE $table;\""
 mysql $DB -e "OPTIMIZE TABLE $table;"
 done
 
+if [ -d "$DEST" ]; then
+  find $DEST -type f -name '*.gz' -mtime +1 -exec rm {} \;
+fi
+
+
 /usr/sbin/zabbix_server -R housekeeper_execute
 
