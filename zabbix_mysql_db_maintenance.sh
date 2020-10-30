@@ -140,7 +140,7 @@ mysql $DB -e "OPTIMIZE TABLE $table;"
 done
 
 if [ -d "$DEST" ]; then
-  find $DEST -type f -name '*.gz' -mtime +1 -exec rm {} \;
+  find $DEST -type f -name '*.gz' -mtime +5 -exec rm {} \;
 fi
 
 
