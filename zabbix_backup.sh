@@ -86,9 +86,6 @@ fi
 
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.sql.data.size -o $(ls -s --block-size=1 $mysql/data.sql.xz | grep -Eo "^[0-9]+")
 
-# grafana container dir
-grafana=$(sudo docker inspect grafana | jq -r ".[].GraphDriver.Data.UpperDir")
-
 sleep 1
 echo -e "\nArchiving important directories and files"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 3
@@ -98,7 +95,7 @@ sudo tar -cJf $filesystem/fs.conf.zabbix.tar.xz \
 --files-from "${0%/*}/backup_zabbix_directories.list" \
 /usr/bin/zabbix_* \
 $(grep zabbix /etc/passwd|cut -d: -f6) \
-$grafana/var/lib/grafana 
+/var/lib/grafana 
 
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o $?
 
