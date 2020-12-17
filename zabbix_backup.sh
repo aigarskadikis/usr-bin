@@ -90,9 +90,10 @@ sleep 1
 echo -e "\nArchiving important directories and files"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 3
 
-sudo tar -cJf $filesystem/fs.conf.zabbix.tar.xz \
---files-from "${0%/*}/backup_zabbix_files.list" \
---files-from "${0%/*}/backup_zabbix_directories.list" \
+# sudo tar -cJf $filesystem/fs.conf.zabbix.tar.xz \
+sudo tar -czvf $filesystem/fs.conf.zabbix.tar.gz \
+--files-from "/etc/zabbix/backup_zabbix_files.list" \
+--files-from "/etc/zabbix/backup_zabbix_directories.list" \
 /usr/bin/zabbix_* \
 $(grep zabbix /etc/passwd|cut -d: -f6) \
 /var/lib/grafana 
