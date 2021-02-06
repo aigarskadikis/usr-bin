@@ -41,6 +41,7 @@ WHERE source = 0
 echo -e "\nExtracting schema"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 1
 mysqldump \
+--set-gtid-purged=OFF \
 --flush-logs \
 --single-transaction \
 --create-options \
