@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ver=$1
+
+if [ ! -d "~/zabbix-source" ]; then
+git clone https://git.zabbix.com/scm/zbx/zabbix.git ~/zabbix-source
+fi
+ 
+cd ~/zabbix-source
+
+git reset --hard HEAD && git clean -fd
+git checkout release/$ver
+./bootstrap.sh && ./configure && make dbschema
+
+cd ~/zabbix-source/database/
