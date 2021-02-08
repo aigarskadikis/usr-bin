@@ -56,7 +56,10 @@ FROM=0
 
 # if table does not have partitions then optize whole table
 echo "OPTIMIZE TABLE $OLD;"
-mysql $DB -e "OPTIMIZE TABLE $OLD;"
+mysql $DB -e "
+SET SESSION SQL_LOG_BIN=0;
+OPTIMIZE TABLE $OLD;
+"
 
 # do mysqldump of whole table
 mysqldump --set-gtid-purged=OFF --flush-logs --single-transaction --no-create-info \
@@ -80,7 +83,10 @@ PARTITION=$(echo "$LINE" | grep -oP "PARTITION.\K\w+")
 
 # rebuild partition, this will really free up free space if some records do not exist anymore
 echo "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
-mysql $DB -e "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
+mysql $DB -e "
+SET SESSION SQL_LOG_BIN=0;
+ALTER TABLE $OLD REBUILD PARTITION $PARTITION;
+"
 
 # timestamp from, grab timstampe from previous partition
 # this is greate workaround to NOT use 'select min(clock) from table partition x'
@@ -136,7 +142,7 @@ order by data_free desc;
 ")
 do
 echo "mysql $DB -e \"OPTIMIZE TABLE $table;\""
-mysql $DB -e "OPTIMIZE TABLE $table;"
+mysql $DB -e "SET SESSION SQL_LOG_BIN=0;OPTIMIZE TABLE $table;"
 done
 
 if [ -d "$DEST" ]; then
