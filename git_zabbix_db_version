@@ -13,3 +13,4 @@ git checkout release/$ver
 ./bootstrap.sh && ./configure && make dbschema
 
 cd ~/zabbix-source/database/
+
