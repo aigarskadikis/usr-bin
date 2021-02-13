@@ -9,6 +9,7 @@ versions="2.4
 4.4
 5.0
 5.2"
+
  
 # create use if it does not exist
 # mysql -e 'DROP USER IF EXISTS "zabbix"@"127.0.0.1";'
