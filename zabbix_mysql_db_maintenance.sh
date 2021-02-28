@@ -11,7 +11,6 @@ DEST=/backup/mysql/zabbix/raw
 FROM=0
 TO=0
 
-
 echo "
 history_str
 history_log
@@ -24,6 +23,9 @@ history_uint
 grep -v "^$" | \
 while IFS= read -r TABLE
 do {
+
+# make sure all is clear
+mysql $DB -e "SET SESSION SQL_LOG_BIN=0; DELETE FROM $TABLE WHERE itemid NOT IN (SELECT itemid FROM items);"
 
 # rename table to old so zabbix application is not locking the data
 OLD=$(echo $TABLE|sed "s|$|_old|")
