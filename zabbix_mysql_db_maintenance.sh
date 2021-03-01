@@ -4,6 +4,13 @@
 # in order to use 'mysql' and 'mysqldump' utility without password
 # kindly install access characteristics in '/root/.my.cnf'
 
+# do not keep history items
+# SELECT itemid FROM history WHERE itemid IN (SELECT itemid FROM items WHERE history=0 AND value_type=0);
+# SELECT itemid FROM history_str WHERE itemid IN (SELECT itemid FROM items WHERE history=0 AND value_type=1);
+# SELECT itemid FROM history_log WHERE itemid IN (SELECT itemid FROM items WHERE history=0 AND value_type=2);
+# SELECT itemid FROM history_uint WHERE itemid IN (SELECT itemid FROM items WHERE history=0 AND value_type=3);
+# SELECT itemid FROM history_text WHERE itemid IN (SELECT itemid FROM items WHERE history=0 AND value_type=4);
+
 date
 
 DB=zabbix
