@@ -23,9 +23,9 @@ mysql zabbix -e "
 DELETE 
 FROM events
 WHERE events.source = 3 
-  AND events.object = 4 
-  AND events.objectid NOT IN (
-    SELECT itemid FROM items)
+AND events.object = 4 
+AND events.objectid NOT IN (
+SELECT itemid FROM items)
 "
 
 echo -e "\nDelete trigger event where triggerid do not exist anymore"
@@ -33,9 +33,9 @@ mysql zabbix -e "
 DELETE
 FROM events
 WHERE source = 0
-  AND object = 0
-  AND objectid NOT IN
-    (SELECT triggerid FROM triggers)
+AND object = 0
+AND objectid NOT IN
+(SELECT triggerid FROM triggers)
 "
 
 echo -e "\nExtracting schema"
@@ -91,7 +91,6 @@ sleep 1
 echo -e "\nArchiving important directories and files"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 3
 
-# sudo tar -cJf $filesystem/fs.conf.zabbix.tar.xz \
 sudo tar -czvf $filesystem/fs.conf.zabbix.tar.gz \
 --files-from "/etc/zabbix/backup_zabbix_files.list" \
 --files-from "/etc/zabbix/backup_zabbix_directories.list" \
