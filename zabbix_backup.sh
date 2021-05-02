@@ -103,6 +103,17 @@ $(grep zabbix /etc/passwd|cut -d: -f6) \
 
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.filesystem.size -o $(ls -s --block-size=1 $filesystem/fs.conf.zabbix.tar.xz | grep -Eo "^[0-9]+")
 
+# remove older files than 30 days
+echo -e "\nThese files will be deleted:"
+find /backup -type f -mtime +30
+# delete files
+find /backup -type f -mtime +30 -delete
+
+echo -e "\nRemoving empty directories:"
+find /backup -type d -empty -print
+# delete empty directories
+find /backup -type d -empty -print -delete
+
 echo -e "\nUploading sql backup to google drive"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 4
 rclone -vv sync $volume/mysql BackupMySQL:mysql
