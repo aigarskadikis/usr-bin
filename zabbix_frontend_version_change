@@ -17,7 +17,7 @@ echo dir=$dir
 echo branch=$branch
 echo zcode=$zcode
 
-grep "$dir" /etc/opt/rh/rh-nginx116/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf 
+grep "$dir" /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf 
 if [ $? -ne 0 ]; then
 
     # if this version is currently not configured in nginx conf
@@ -43,7 +43,7 @@ global \$DB;
 
 \$DB['TYPE']     = 'POSTGRESQL';
 \$DB['SERVER']   = '10.133.112.87';
-\$DB['PORT']     = '8712';
+\$DB['PORT']     = '7412';
 \$DB['DATABASE'] = '$zcode';
 \$DB['USER']     = 'zabbix';
 \$DB['PASSWORD'] = 'zabbix';
@@ -62,7 +62,7 @@ EOF
 
 echo creating nginx conf
             
-cat << EOF > /etc/opt/rh/rh-nginx116/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+cat << EOF > /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
 server {
         listen          $listen;
         server_name     $zcode.catonrug.net;
@@ -94,7 +94,7 @@ server {
         }
 
         location ~ [^/]\.php(/|$) {
-                fastcgi_pass    unix:/var/opt/rh/rh-php72/run/php-fpm/zabbix.sock;
+                fastcgi_pass    unix:/run/php-fpm/zabbix.sock;
                 fastcgi_split_path_info ^(.+\.php)(/.+)$;
                 fastcgi_index   index.php;
 
@@ -134,7 +134,7 @@ global \$DB;
 
 \$DB['TYPE']     = 'POSTGRESQL';
 \$DB['SERVER']   = '10.133.112.87';
-\$DB['PORT']     = '8712';
+\$DB['PORT']     = '7412';
 \$DB['DATABASE'] = '$zcode';
 \$DB['USER']     = 'zabbix';
 \$DB['PASSWORD'] = 'zabbix';
@@ -151,7 +151,7 @@ EOF
 
 chmod o+w /usr/share/$dir/ui/conf/zabbix.conf.php
             
-cat << EOF > /etc/opt/rh/rh-nginx116/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+cat << EOF > /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
 server {
         listen          $listen;
         server_name     $zcode.catonrug.net;
@@ -183,7 +183,7 @@ server {
         }
 
         location ~ [^/]\.php(/|$) {
-                fastcgi_pass    unix:/var/opt/rh/rh-php72/run/php-fpm/zabbix.sock;
+                fastcgi_pass    unix:/run/php-fpm/zabbix.sock;
                 fastcgi_split_path_info ^(.+\.php)(/.+)$;
                 fastcgi_index   index.php;
 
@@ -212,9 +212,8 @@ EOF
 
 
 fi
-# echo "$branch" | grep "^[5-9]"
 
-systemctl restart rh-nginx116-nginx rh-php72-php-fpm
+systemctl restart nginx php-fpm
 
         fi
 
@@ -222,14 +221,11 @@ systemctl restart rh-nginx116-nginx rh-php72-php-fpm
 
     else
         echo need to only change nginx conf
-        sed -i "s|zabbix-$branch\.[0-9a-z]\+|$dir|" /etc/opt/rh/rh-nginx116/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
-systemctl restart rh-nginx116-nginx rh-php72-php-fpm
+        sed -i "s|zabbix-$branch\.[0-9a-z]\+|$dir|" /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+systemctl restart nginx php-fpm
     fi
-
-
 
 else
     echo already exists on version $version
 fi
-# grep "$dir" /etc/opt/rh/rh-nginx116/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf 
 
