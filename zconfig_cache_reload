@@ -1,3 +1,0 @@
-#!/bin/bash
-VAR=z$(echo $1)srv
-docker exec -it $VAR zabbix_server -R config_cache_reload
