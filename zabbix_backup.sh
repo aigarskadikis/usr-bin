@@ -59,6 +59,23 @@ ls -lh $mysql
 fi
 
 sleep 1
+
+echo -e "\nBackup in one file. Useful to quickly bring back older configuration. while still keeping history"
+mysqldump \
+--set-gtid-purged=OFF \
+--flush-logs \
+--single-transaction \
+--ignore-table=zabbix.history \
+--ignore-table=zabbix.history_log \
+--ignore-table=zabbix.history_str \
+--ignore-table=zabbix.history_text \
+--ignore-table=zabbix.history_uint \
+--ignore-table=zabbix.trends \
+--ignore-table=zabbix.trends_uint \
+zabbix > $mysql/quick.restore.sql && \
+xz $mysql/quick.restore.sql
+
+sleep 1
 echo -e "\nData backup except raw metrics"
 /usr/bin/zabbix_sender --zabbix-server $contact --host $(hostname -s).gnt.lan -k backup.status -o 2
 mysqldump \
