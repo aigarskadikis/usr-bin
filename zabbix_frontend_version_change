@@ -17,7 +17,7 @@ echo dir=$dir
 echo branch=$branch
 echo zcode=$zcode
 
-grep "$dir" /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf 
+grep "$dir" /etc/nginx/conf.d/http.$zcode.aigarskadikis.com.$listen.conf 
 if [ $? -ne 0 ]; then
 
     # if this version is currently not configured in nginx conf
@@ -62,10 +62,10 @@ EOF
 
 echo creating nginx conf
             
-cat << EOF > /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+cat << EOF > /etc/nginx/conf.d/http.$zcode.aigarskadikis.com.$listen.conf
 server {
         listen          $listen;
-        server_name     $zcode.catonrug.net;
+        server_name     $zcode.aigarskadikis.com;
 
         root    /usr/share/$dir/frontends/php;
 
@@ -151,10 +151,10 @@ EOF
 
 chmod o+w /usr/share/$dir/ui/conf/zabbix.conf.php
             
-cat << EOF > /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+cat << EOF > /etc/nginx/conf.d/http.$zcode.aigarskadikis.com.$listen.conf
 server {
         listen          $listen;
-        server_name     $zcode.catonrug.net;
+        server_name     $zcode.aigarskadikis.com;
 
         root    /usr/share/$dir/ui;
 
@@ -221,7 +221,7 @@ systemctl restart nginx php-fpm
 
     else
         echo need to only change nginx conf
-        sed -i "s|zabbix-$branch\.[0-9a-z]\+|$dir|" /etc/nginx/conf.d/http.$zcode.catonrug.net.$listen.conf
+        sed -i "s|zabbix-$branch\.[0-9a-z]\+|$dir|" /etc/nginx/conf.d/http.$zcode.aigarskadikis.com.$listen.conf
 systemctl restart nginx php-fpm
     fi
 
