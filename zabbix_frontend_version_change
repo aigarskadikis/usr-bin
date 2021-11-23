@@ -51,7 +51,7 @@ global \$DB;
 // Schema name. Used for IBM DB2 and PostgreSQL.
 \$DB['SCHEMA'] = 'public';
 
-\$ZBX_SERVER      = '127.0.0.1';
+\$ZBX_SERVER      = '10.133.253.44';
 \$ZBX_SERVER_PORT = '$bport';
 \$ZBX_SERVER_NAME = '';
 
@@ -142,7 +142,7 @@ global \$DB;
 // Schema name. Used for IBM DB2 and PostgreSQL.
 \$DB['SCHEMA'] = 'public';
 
-\$ZBX_SERVER      = '127.0.0.1';
+\$ZBX_SERVER      = '10.133.253.44';
 \$ZBX_SERVER_PORT = '$bport';
 \$ZBX_SERVER_NAME = '';
 

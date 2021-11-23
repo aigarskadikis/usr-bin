@@ -41,11 +41,14 @@ TMP=$(echo $TABLE|sed "s|$|_tmp|")
 
 # do not distract environment while optimizing
 echo "RENAME TABLE $TABLE TO $OLD;"
+date
 mysql $DB -e "RENAME TABLE $TABLE TO $OLD;"
 
 # create similar table
 echo "CREATE TABLE $TABLE LIKE $OLD;"
+date
 mysql $DB -e "CREATE TABLE $TABLE LIKE $OLD;"
+date
 
 # determine if table is using partitioning
 PART_LIST_DETAILED=$(
@@ -64,15 +67,18 @@ then
 FROM=0
 
 # if table does not have partitions then optize whole table
+date
 echo "OPTIMIZE TABLE $OLD;"
 mysql $DB -e "
 SET SESSION SQL_LOG_BIN=0;
 OPTIMIZE TABLE $OLD;
 "
+date
 
-# do mysqldump of whole table
+echo "do mysqldump of whole table $OLD"
 mysqldump --set-gtid-purged=OFF --flush-logs --single-transaction --no-create-info \
 $DB $OLD | gzip --fast > $DEST/$(date -d @$FROM "+%Y%m%d").$OLD.sql.gz
+date
 
 else
 # if table contains partitions
@@ -91,12 +97,13 @@ do {
 PARTITION=$(echo "$LINE" | grep -oP "PARTITION.\K\w+")
 
 # rebuild partition, this will really free up free space if some records do not exist anymore
+date
 echo "ALTER TABLE $OLD REBUILD PARTITION $PARTITION;"
 mysql $DB -e "
 SET SESSION SQL_LOG_BIN=0;
 ALTER TABLE $OLD REBUILD PARTITION $PARTITION;
 "
-
+date
 # timestamp from, grab timstampe from previous partition
 # this is greate workaround to NOT use 'select min(clock) from table partition x'
 FROM=$TO
