@@ -12,7 +12,7 @@ if [ ! -d "$dest" ]; then
 fi
 
 for db in $(
-PGPORT=7412 PGPASSWORD=zabbix PGUSER=postgres psql -h 10.133.112.87 -t -A -c "SELECT datname FROM pg_database where datname not in ('template0','template1','postgres','dummy_db')"
-) ; do echo $db; PGPORT=7412 PGPASSWORD=zabbix PGUSER=postgres pg_dump -h 10.133.112.87 $db | xz > $dest/$db.sql.xz ; done
+PGPORT=7413 PGPASSWORD=postgres PGUSER=postgres psql -h 158.101.218.248 -t -A -c "SELECT datname FROM pg_database where datname not in ('template0','template1','postgres','dummy_db')"
+) ; do echo $db; PGPORT=7413 PGPASSWORD=postgres PGUSER=postgres pg_dump -h 158.101.218.248 $db | xz > $dest/$db.sql.xz ; done
 
 rclone -vv sync $volume BackupPostgreSQL:postgres
