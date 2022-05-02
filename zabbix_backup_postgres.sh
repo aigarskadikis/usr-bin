@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DBHOST=158.101.218.248
+DBPORT=7413
+
 year=$(date +%Y)
 month=$(date +%m)
 day=$(date +%d)
@@ -12,8 +15,50 @@ if [ ! -d "$dest" ]; then
 fi
 
 for db in $(
-PGPORT=7413 PGPASSWORD=postgres PGUSER=postgres psql -h 158.101.218.248 -t -A -c "SELECT datname FROM pg_database where datname not in ('template0','template1','postgres','dummy_db')"
-) ; do echo $db; PGPORT=7413 PGPASSWORD=postgres PGUSER=postgres pg_dump -h 158.101.218.248 $db | xz > $dest/$db.sql.xz ; done
+PGPORT=$DBPORT PGPASSWORD=zabbix PGUSER=postgres psql -h $DBHOST -t -A -c "SELECT datname FROM pg_database where datname not in ('template0','template1','postgres','dummy_db')"
+) ; do
+echo $db
+
+# backup database without hypertables
+# use contom format (which is compressed by default
+PGHOST=$DBHOST \
+PGPORT=$DBPORT \
+PGUSER=postgres \
+PGPASSWORD=zabbix \
+pg_dump \
+--dbname=$db \
+--format=c \
+--blobs \
+--exclude-table-data '*.history*' \
+--exclude-table-data '*.trends*' \
+--exclude-table-data='_timescaledb_internal._hyper*' \
+--file=$dest/$db.pg_dump.custom
+
+# backup raw data individually
+echo "
+history
+history_uint
+history_str
+history_text
+history_log
+trends
+trends_uint
+" | \
+grep -v "^$" | \
+while IFS= read -r TABLE
+do {
+PGHOST=$DBHOST \
+PGPORT=$DBPORT \
+PGUSER=postgres \
+PGPASSWORD=zabbix \
+psql --dbname=$db \
+-c "COPY (SELECT * FROM $TABLE) TO stdout DELIMITER ',' CSV" | \
+xz > $dest/$db.old_$TABLE.csv.xz
+} done
+# end of table by table
+
+# end per database
+done
 
 # remove older files than 30 days
 echo -e "\nThese files will be deleted:"
